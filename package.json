@@ -1,0 +1,19 @@
+{
+  "name": "mean",
+  "version": "1.0.0",
+  "description": "mean machine tutorial",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.14.2",
+    "express": "^4.13.4",
+    "jsonwebtoken": "^5.5.4",
+    "mongoose": "^4.3.6",
+    "morgan": "^1.6.1"
+  }
+}
