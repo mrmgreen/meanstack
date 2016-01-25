@@ -41,7 +41,7 @@ app.get('/', function(req,res) {
 var apiRouter = express.Router();
 
 // route for authenticatin users
-apiRouter.post('/authenticate', function(){
+apiRouter.post('/authenticate', function(req,res){
 
 	// find the user
 	// select the name username and password explicitly
@@ -55,24 +55,35 @@ apiRouter.post('/authenticate', function(){
 					success: false,
 					message: 'Authentication failed. User not found'
 				})
-			} else {
+			} else if (user) {
 
-				// if user is found and password is right
-				// create a token
-				var token = jwt.sign({
-					name:user.name,
-					username: user.username
-				}, superSecret, {
-					expiresInMintues: 1440 //expies in 24 hours
-				});
+				//check if password matches
+				var validPassword = user.comparePassword(req.body.password);
+				if (!validPassword) {
+					res.json({
+						success: false,
+						messae: 'Authentication failed. Wrong password.'
+					});
+				} else {
 
-				// return the information including token as JSON
-				re.json({
-					success: true,
-					message: 'Enjoy your token',
-					token:token
-				});
+					// if user is found and password is right
+					// create a token
+					var token = jwt.sign({
+						name:user.name,
+						username: user.username
+					}, superSecret, {
+						expiresInMintues: 1440 //expies in 24 hours
+					});
+
+					// return the information including token as JSON
+					res.json({
+						success: true,
+						message: 'Enjoy your token',
+						token:token
+					});
+				}
 			}
+
 		});
 });
 
