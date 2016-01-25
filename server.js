@@ -87,16 +87,37 @@ apiRouter.post('/authenticate', function(req,res){
 		});
 });
 
-// middleware to use for all requests
+// route middleware to verify a token
 apiRouter.use(function(req,res,next) {
-	//do logging
-	console.log('Somebody just came to our app.');
+	// check header or url parameters or post parameters for token
+	var token = req.body.token || req.query['token'] || req.headers['x-access-token'];
 
-	// we'll add more to the middleware later
-	// this is where we will authenticate users
+	// decode token
+	if (token) {
 
-	next();
+		// verifies secret and checks exp
+		jwt.verify(token, superSecret, function(err, decoded) {
+			if (err) {
+				return res.status(403).send({
+					success: false,
+					message: 'Failed to authenticate token.'
+				});
+			} else {
+				// if everything is good, save to request for use in other routes
+				req.decoded = decoded;
 
+				next();
+			}
+		})
+	} else {
+
+		// if there is no token
+		// return an HTTP response if 403 (access forbidden) and an error message
+		return res.status(403).send({
+			success: false,
+			message: 'No token provided.'
+		});
+	}
 });
 
 // test route to make sure everything is working
@@ -165,9 +186,6 @@ apiRouter.route('/users/:user_id')
 		User.findById(req.params.user_id, function(err,user) {
 			if (err) res.send(err);
 
-			//mg test
-			console.log('req.body.name', req.params.user_id);
-
 			// return that user
 			res.json(user);
 		});
@@ -211,6 +229,11 @@ apiRouter.route('/users/:user_id')
 			res.json({ message: 'Successfully deleted' });
 		});
 	});
+
+// api endpoint to get user information
+apiRouter.get('/me', function(req,res) {
+	res.send(req.decoded);
+});
 
 //START THE SERVER
 // =======================
