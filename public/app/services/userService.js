@@ -10,7 +10,7 @@ angular.module('userService', [])
       return $http.get('/api/users/' + id);
     };
 
-    // get a ll users
+    // get all users
     userFactory.all = function() {
       return $http.get('/api/users/');
     };
@@ -20,17 +20,17 @@ angular.module('userService', [])
       return $http.post('/api/users/', userData);
     };
 
-    // get a single user
+    // update a user
     userFactory.update = function(id, userData) {
       return $http.put('/api/users/' + id, userData);
     };
 
-    // get a single user
+    // delete a user
     userFactory.delete = function(id) {
       return $http.delete('/api/users/' + id);
     };
 
-    //return our entire userFactory object
+    // return our entire userFactory object
     return userFactory;
 
   });
